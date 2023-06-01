@@ -11,8 +11,9 @@ export const SearchBookPage = () => {
   const [booksPerPage] = useState(5);
   const [totalBooks, setTotalBooks] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [search, setSearch] = useState('');
-  const [searchUrl, setSearchUrl] = useState('');
+  const [search, setSearch] = useState("");
+  const [searchUrl, setSearchUrl] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState('Book Category');
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -20,16 +21,12 @@ export const SearchBookPage = () => {
 
       let url: string = '';
 
-      if (search === '') {
+      if (searchUrl === '') {
         url = `${baseUrl}?page=${currentPage - 1}&size=${booksPerPage}`;
       } else {
-        url= baseUrl+ searchUrl;
+        let searchWithPage = searchUrl.replace('<pageNumber>',`${currentPage-1}`);
+        url = baseUrl + searchWithPage;
       }
-      
-      console.log((search.length===0?"Empty":search));
-      
-      console.log(url);
-      
 
       const response = await fetch(url);
 
@@ -84,14 +81,32 @@ export const SearchBookPage = () => {
     );
   }
 
-  const searchHandleChange = ()=>{
-    if(search===''){
-        setSearchUrl('');
-    }else{
-        setSearchUrl(`/search/findBookByTitleContaining?title=${search}&page=0&size=${booksPerPage}`)
+  const searchHandleChange = () => {
+    setCurrentPage(1);
+    if (search === "") {
+      setSearchUrl("");
+    } else {
+      setSearchUrl(
+        `/search/findBookByTitleContaining?title=${search}&page=<pageNumber>&size=${booksPerPage}`
+      );
     }
+  };
 
+  const categorySelection = (value: string)=>{
+    setCurrentPage(1);
+    if(value.toLowerCase()==='fe' || value.toLowerCase()==='be' || value.toLowerCase()==='data' || value.toLowerCase()==='devops'){
+        setSelectedCategory(value);
+        console.log(selectedCategory);
+        
+        setSearchUrl(`/search/findBookByCategoryContaining?category=${value}&page=<pageNumber>&size=${booksPerPage}`);
+        console.log(searchUrl);
+    }else{
+        setSelectedCategory('All');
+        setSearchUrl(`?page=<pageNumber>&size=${booksPerPage}`);
+        console.log(searchUrl);
+    }
   }
+
   const indexOfLastBook: number = currentPage * booksPerPage;
   const indexOfFirstBook: number = indexOfLastBook - booksPerPage;
   let lastItem =
@@ -115,7 +130,12 @@ export const SearchBookPage = () => {
                   aria-labelledby="Search"
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                <button className="btn btn-outline-success" onClick={()=>searchHandleChange()}>Search</button>
+                <button
+                  className="btn btn-outline-success"
+                  onClick={() => searchHandleChange()}
+                >
+                  Search
+                </button>
               </div>
             </div>
             <div className="col-4">
@@ -127,33 +147,33 @@ export const SearchBookPage = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  Category
+                  {selectedCategory}
                 </button>
                 <ul
                   className="dropdown-menu"
                   aria-labelledby="dropdownMenuButton1"
                 >
-                  <li>
+                  <li onClick={()=>categorySelection('All')}>
                     <a className="dropdown-item" href="#">
                       All
                     </a>
                   </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
+                  <li onClick={()=>categorySelection('fe')}>
+                    <a className="dropdown-item" href="#" >
                       Front End
                     </a>
                   </li>
-                  <li>
+                  <li onClick={()=>categorySelection('be')}>
                     <a className="dropdown-item" href="#">
                       Back End
                     </a>
                   </li>
-                  <li>
+                  <li onClick={()=>categorySelection('data')}>
                     <a className="dropdown-item" href="#">
                       Data
                     </a>
                   </li>
-                  <li>
+                  <li onClick={()=>categorySelection('devops')}>
                     <a className="dropdown-item" href="#">
                       DevOps
                     </a>
@@ -162,16 +182,30 @@ export const SearchBookPage = () => {
               </div>
             </div>
           </div>
-          <div className="mt-3">
-            <h5>Number of results: {totalBooks}</h5>
-          </div>
-          <p>
-            {indexOfFirstBook + 1} to {lastItem} of {totalBooks} items:
-          </p>
-          {books.map((book) => (
-            <SearchBook book={book} key={book.id} />
-          ))}
-
+          {totalBooks > 0 ? (
+            <>
+              <div className="mt-3">
+                <h5>Number of results: {totalBooks}</h5>
+              </div>
+              <p>
+                {indexOfFirstBook + 1} to {lastItem} of {totalBooks} items:
+              </p>
+              {books.map((book) => (
+                <SearchBook book={book} key={book.id} />
+              ))}
+            </>
+          ) : (
+            <div className="m-5">
+              <h3>Can't find what you are looking for</h3>
+              <a
+                type="button"
+                className="btn main-color btn-md px-4 me-md-2 fw-bold text-white"
+                href="#"
+              >
+                Library Services
+              </a>
+            </div>
+          )}
           {totalPages > 1 && (
             <Pagination
               currentPage={currentPage}
