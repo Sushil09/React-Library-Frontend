@@ -8,6 +8,7 @@ import { HomePage } from "./components/Homepage/HomePage";
 import { SearchBookPage } from "./components/SearchBooksPage/SearchBookPage";
 import { Navbar } from "./components/NavbarAndFooter/Navbar";
 import { Footer } from "./components/Homepage/components/Footer";
+import { BookCheckoutPage } from "./components/BooksCheckoutPage/BookCheckoutPage";
 
 
 const App = () => {  
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "/search",
         element: <SearchBookPage />
+      },
+      {
+        path: "/checkout/:bookId",
+        element: <BookCheckoutPage />
       }
     ]
   }
