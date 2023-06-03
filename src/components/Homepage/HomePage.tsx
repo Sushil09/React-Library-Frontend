@@ -12,7 +12,6 @@ export const HomePage = () => {
             <Carousel/>
             <Heros/>
             <LibraryServices/>
-            <SearchBookPage/>
         </>
     );
 }
