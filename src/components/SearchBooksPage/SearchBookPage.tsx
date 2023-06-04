@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { SpinnerLoading } from "../utils/SpinnerLoading";
 import { SearchBook } from "./components/SearchBook";
 import { Pagination } from "../utils/Pagination";
+import BookModel from "../../model/BookModel";
 
 export const SearchBookPage = () => {
   const [books, setBooks] = useState<BookModel[]>([]);
@@ -55,7 +56,7 @@ export const SearchBookPage = () => {
           copies: responseData[key].copies,
           copiesAvailable: responseData[key].copiesAvailable,
           category: responseData[key].category,
-          img: responseData[key].img,
+          img: responseData[key].image,
         });
       }
 

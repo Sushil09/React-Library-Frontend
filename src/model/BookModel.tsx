@@ -1,4 +1,3 @@
-// @ts-ignore
 class BookModel {
     id:number;
     title:string;
@@ -20,3 +19,5 @@ class BookModel {
         this.img = img;
     }
 }
+
+export default BookModel;
